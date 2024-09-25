@@ -11,7 +11,15 @@ const schema = a.schema({
     .model({
       content: a.string(),
     })
-    .authorization((allow) => [allow.owner(), allow.publicApiKey().to(['read'])]),
+    .authorization((allow) => [allow.owner(), allow.publicApiKey().to(['read', 'create', 'update', 'delete'])]),
+  Task: a
+    .model({
+      originLanguage: a.string(),
+      targetLanguage: a.string(),
+      note: a.string(),
+      status: a.string(),
+    })
+    .authorization((allow) => [allow.owner(), allow.publicApiKey().to(['read', 'create', 'update', 'delete'])]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
