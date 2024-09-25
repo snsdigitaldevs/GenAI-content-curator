@@ -8,10 +8,10 @@ import "@aws-amplify/ui-react/styles.css";
 import "./../app/app.css";
 
 // only use for local development
-// import outputs from "@/amplify_outputs.json";
-// import { Amplify } from "aws-amplify";
+import outputs from "@/amplify_outputs.json";
+import { Amplify } from "aws-amplify";
 
-// Amplify.configure(outputs);
+Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
 
