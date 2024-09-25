@@ -10,34 +10,6 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { ORIGIN_LANGUAGE, TARGET_LANGUAGE } from '../constant';
 
-const columns: TableProps<Schema['Task']['type']>['columns'] = [
-  {
-    title: 'Id',
-    dataIndex: 'id',
-    key: 'id',
-  },
-  {
-    title: 'Origin Language',
-    dataIndex: 'originLanguage',
-    key: 'originLanguage',
-  },
-  {
-    title: 'Target Language',
-    dataIndex: 'targetLanguage',
-    key: 'targetLanguage',
-  },
-  {
-    title: 'Note',
-    dataIndex: 'note',
-    key: 'note',
-  },
-  {
-    title: 'Status',
-    key: 'status',
-    dataIndex: 'status',
-  }
-];
-
 Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
@@ -51,6 +23,44 @@ export default function TaskList() {
   useEffect(() => {
     listTasks();
   }, []);
+
+  const columns: TableProps<Schema['Task']['type']>['columns'] = [
+    {
+      title: 'Id',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'Origin Language',
+      dataIndex: 'originLanguage',
+      key: 'originLanguage',
+    },
+    {
+      title: 'Target Language',
+      dataIndex: 'targetLanguage',
+      key: 'targetLanguage',
+    },
+    {
+      title: 'Note',
+      dataIndex: 'note',
+      key: 'note',
+    },
+    {
+      title: 'Status',
+      key: 'status',
+      dataIndex: 'status',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <>
+          <Button type="link" onClick={() => router.push(`/gen-ui/tasks/${record.id}`)}>View</Button>
+          <Button type="link" onClick={() => handleDeleteTask(record.id)}>Delete</Button>
+        </>
+      ),
+    }
+  ];
 
   const listTasks = () => {
     client.models.Task.observeQuery().subscribe({
@@ -70,19 +80,18 @@ export default function TaskList() {
     });
   }
 
-  const handleOnRowClick: TableProps<Schema['Task']['type']>["onRow"] = (record) => ({
-    onClick: () => {
-      router.push(`/gen-ui/tasks/${record.id}`);
-    }
-  });
+  const handleDeleteTask = (id: string) => {
+    client.models.Task.delete({ id });
+    setTasks(tasks.filter((task) => task.id !== id));
+  }
 
   return <div className="flex flex-col gap-4">
     <Flex justify="space-between" gap={12}>
       <Input placeholder="Search by task name" />
       <Button type="primary" onClick={() => setIsModalOpen(true)}>Add task</Button>
     </Flex>
-    
-    <Table<Schema['Task']['type']> columns={columns} dataSource={tasks} rowKey={(record) => record.id} onRow={handleOnRowClick}/>
+
+    <Table<Schema['Task']['type']> columns={columns} dataSource={tasks} rowKey={(record) => record.id} />
 
     <Modal 
       title="Add task" 
