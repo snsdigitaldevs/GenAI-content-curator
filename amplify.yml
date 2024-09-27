@@ -9,6 +9,7 @@ frontend:
   phases:
     build:
       commands:
+        - env | grep -e BEDROCK_AWS_ACCESS_KEY_ID -e BEDROCK_AWS_SECRET_ACCESS_KEY -e BEDROCK_AWS_REGION >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
